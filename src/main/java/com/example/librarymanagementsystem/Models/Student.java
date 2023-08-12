@@ -17,7 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Student {
 
-    @Id //Used for saying its a primary key
+    @Id //Used for saying it's a primary key
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer rollNo;
 
@@ -33,9 +33,6 @@ public class Student {
 
     @Column(unique = true)
     private String emailId;
-
-
-    //@OneToOne(mappedBy = "")
 
     @OneToOne(mappedBy = "student",cascade = CascadeType.ALL)
     private LibraryCard libraryCard;

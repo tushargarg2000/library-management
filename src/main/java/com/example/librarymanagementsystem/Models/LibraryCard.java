@@ -23,5 +23,5 @@ public class LibraryCard {
 
     @OneToOne
     @JoinColumn
-    private Student student;
+    private Student student; //you need to set the student object here.
 }
