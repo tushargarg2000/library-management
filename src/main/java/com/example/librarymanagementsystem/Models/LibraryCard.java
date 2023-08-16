@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table
 @Getter
@@ -24,4 +27,8 @@ public class LibraryCard {
     @OneToOne
     @JoinColumn
     private Student student; //you need to set the student object here.
+
+
+    @OneToMany(mappedBy = "libraryCard",cascade = CascadeType.ALL)
+    private List<Transaction> transactionList = new ArrayList<>();
 }

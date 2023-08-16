@@ -4,15 +4,18 @@ package com.example.librarymanagementsystem.Models;
 import com.example.librarymanagementsystem.Enums.Genre;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table
 @Getter
 @Setter
-
+@NoArgsConstructor
 public class Book {
 
     @Id
@@ -42,5 +45,8 @@ public class Book {
     @ManyToOne
     @JoinColumn
     private Author author;
-    //Unidirectional mapping
+
+    @OneToMany(mappedBy = "book",cascade = CascadeType.ALL)
+    private List<Transaction> transactionList = new ArrayList<>();
+
 }

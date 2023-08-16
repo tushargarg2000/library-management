@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/author")
 @Slf4j
 public class AuthorController {
+
     @Autowired
     private AuthorService authorService;
+
 
 
     @PostMapping("/add")
@@ -47,10 +50,18 @@ public class AuthorController {
 
         try{
             String result = authorService.updateNameAndPenName(updateNameAndPenNameRequest);
+            return result;
 
         }catch (Exception e){
             return "Author Id is invalid"+e.getMessage();
         }
+
+    }
+
+    @GetMapping("/getAuthor")
+    public Author getAuthor(@RequestParam("authorId")Integer authorId){
+
+        return authorService.getAuthorById(authorId);
 
     }
 

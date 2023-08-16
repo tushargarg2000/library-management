@@ -47,7 +47,6 @@ public class BookService {
         list.add(book);
         author.setBookList(list);
 
-
         //I need to save them :-->
 
         //Save only the parent : child will get automatically saved
