@@ -2,6 +2,7 @@ package com.example.librarymanagementsystem.Models;
 
 import com.example.librarymanagementsystem.Enums.TransactionStatus;
 import com.example.librarymanagementsystem.Enums.TransactionType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -47,13 +48,20 @@ public class Transaction {
 
     private Integer fineAmount;
 
+    public Transaction(TransactionStatus transactionStatus, TransactionType transactionType, Integer fineAmount) {
+        this.transactionStatus = transactionStatus;
+        this.transactionType = transactionType;
+        this.fineAmount = fineAmount;
+    }
 
     @ManyToOne
     @JoinColumn
+    @JsonIgnore
     private Book book;
 
     @ManyToOne
     @JoinColumn
+    @JsonIgnore
     private LibraryCard libraryCard;
 
 

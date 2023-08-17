@@ -2,6 +2,7 @@ package com.example.librarymanagementsystem.Models;
 
 
 import com.example.librarymanagementsystem.Enums.Genre;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,6 +45,7 @@ public class Book {
 
     @ManyToOne
     @JoinColumn
+    @JsonIgnore
     private Author author;
 
     @OneToMany(mappedBy = "book",cascade = CascadeType.ALL)
