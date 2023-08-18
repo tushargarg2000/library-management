@@ -16,7 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class TransactionService {
@@ -62,7 +65,6 @@ public class TransactionService {
 
         LibraryCard card = optionalLibraryCard.get();
         if(!card.getCardStatus().equals(CardStatus.ACTIVE)){
-
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             transaction = transactionRepository.save(transaction);
 
@@ -74,9 +76,7 @@ public class TransactionService {
             transaction = transactionRepository.save(transaction);
             throw new Exception("Already max Limit Books are issued");
         }
-
         /*  All the failed cases and invalid scenarios are over */
-
         //We have reached at a success point
 
         transaction.setTransactionStatus(TransactionStatus.SUCCESS);
@@ -84,19 +84,15 @@ public class TransactionService {
         //update the card and book Entity
         book.setIsAvailable(Boolean.FALSE);
         card.setNoOfBooksIssued(card.getNoOfBooksIssued()+1);
-
         //We need to do unidirectional mappings :-->
         transaction.setBook(book);
         transaction.setLibraryCard(card);
 
 
         Transaction newTransactionWithId = transactionRepository.save(transaction);
-
         //We need to do in the parent classes
         book.getTransactionList().add(newTransactionWithId);
-
         card.getTransactionList().add(newTransactionWithId);
-
 
         bookRepository.save(book);
         cardRepository.save(card);
@@ -104,7 +100,49 @@ public class TransactionService {
         //What all needs to saved
         return "Transaction has been saved successfully";
 
-
     }
+
+    public String returnBook(Integer bookId,Integer cardId){
+
+        Book book = bookRepository.findById(bookId).get();
+        LibraryCard card = cardRepository.findById(cardId).get();
+
+
+        List<Transaction> transactionList = transactionRepository.findTransactionsByBookAndLibraryCardAndTransactionStatusAndTransactionType(book,card,TransactionStatus.SUCCESS,TransactionType.ISSUE);
+
+        Transaction latestTransaction = transactionList.get(transactionList.size()-1);
+
+        Date issueDate = latestTransaction.getCreatedAt();
+
+        long milliSecondTime = Math.abs(System.currentTimeMillis() - issueDate.getTime());
+        long no_of_days_issued = TimeUnit.DAYS.convert(milliSecondTime,TimeUnit.MILLISECONDS);
+
+
+        int fineAmount = 0;
+        if(no_of_days_issued>15){
+            fineAmount = (int) ((no_of_days_issued - 15)*5);
+        }
+
+        book.setIsAvailable(Boolean.TRUE);
+        card.setNoOfBooksIssued(card.getNoOfBooksIssued()-1);
+
+        Transaction transaction = new Transaction(TransactionStatus.SUCCESS,TransactionType.RETURN,fineAmount);
+
+        transaction.setBook(book);
+        transaction.setLibraryCard(card);
+
+
+        Transaction newTransactionWithId = transactionRepository.save(transaction);
+
+        book.getTransactionList().add(newTransactionWithId);
+        card.getTransactionList().add(newTransactionWithId);
+
+        //Saving the parents
+        bookRepository.save(book);
+        cardRepository.save(card);
+
+        return "Book has successfully been returned";
+    }
+
 
 }

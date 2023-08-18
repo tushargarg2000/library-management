@@ -38,6 +38,7 @@ public class Author {
 
 
     @OneToMany(mappedBy = "author",cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Book> bookList = new ArrayList<>();
 
 }
